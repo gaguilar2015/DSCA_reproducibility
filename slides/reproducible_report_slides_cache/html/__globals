@@ -1,0 +1,9 @@
+xaringan-themer	library	style_duo_accent
+unnamed-chunk-1	::
+packages	library
+lifeExp-plot	$	%>%	aes	continent	country	gapminder_country	gapminder_sub	geom_label	geom_line	ggplot	labs	lifeExp	params	paste	slice	which.min	year
+Creating the life expectancy plot	aes	c	continent_map_data	coord_quickmap	country	country_coords	geom_label	geom_point	geom_polygon	ggplot	ggtitle	group	guide_legend	guides	lat	long	mean_lat	mean_lifeExp	mean_long	theme_void
+preprocess1	source
+preprocess2	source
+preprocess3	source
+Creating the life expectancy plot Myanmar	aes	c	continent_map_data	coord_quickmap	country_coords	geom_label	geom_point	geom_polygon	ggplot	ggtitle	group	guide_legend	guides	lat	long	mean_lat	mean_lifeExp	mean_long	theme_void

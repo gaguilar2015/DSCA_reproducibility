@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Reproducible reports using Rmarkdown</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <meta name="author" content="Dr. Laurie Baker" />
+    <meta name="date" content="2020-08-14" />
+    <link href="libs/countdown/countdown.css" rel="stylesheet" />
+    <script src="libs/countdown/countdown.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Reproducible reports using Rmarkdown
+## Data Science Campus, Office for National Statistics
+### 
+### Dr. Laurie Baker
+### 2020-08-14
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+
+# You
+
+.pull_left[
+* Have some familiarity with R. 
+
+* Are new to Rmarkdown.
+
+* Are interested in creating reproducible reports.
+
+* Aspire to be a reproducibility wizard!
+
+]
+.pull-right[
+
+
+&lt;img src="images/rmarkdown_wiz.png" style="width: 70%; height: 70%" class="center"/&gt;
+Artwork by @allison_horst
+]
+---
+
+
+# The Reproducibility Gold Standard
+
+![](images/spectrum-of-reproducibility-Source-Peng-2011-DOI-101126-science1213847.png)
+
+
+???
+
+Image 1 from [Reproducible Research in Computational Science](https://science.sciencemag.org/content/334/6060/1226) by Roger Peng.
+
+---
+# Bring in the band!
+
+&lt;img src="images/rmarkdown_rockstar.png" style="width: 70%; height: 70%" class="center"/&gt;
+
+Artwork by @allison_horst
+
+---
+
+# Learning objectives
+
+* Learn the basics of markdown syntax and how to create code chunks.
+
+--
+
+* Learn how to build a fully reproducible report combining code and text using Rmarkdown.
+
+--
+
+* Learn to use parameters to add flexibility to reports in Rmarkdown.
+
+--
+
+* Learn to use `rmarkdown::render()` to render/knit at command line. 
+
+
+---
+# Getting started
+
+* We'll be working with and adapting the file `Country_Report.Rmd`. 
+
+* For this adventure you'll also need the `tidyverse`, `countrycode`, and `gapminder` packages.
+
+
+```r
+#install.packages("tidyverse")
+#install.packages("gapminder")
+#install.packages("countrycode")
+
+library(tidyverse)
+library(gapminder)
+library(countrycode)
+```
+
+---
+# What is R Markdown?
+
+.pull-left[
+
+* A reproducible record of your work.
+
+
+* .Rmd file that contains the text and code to repeat your work.
+
+
+* Interacts with pandocs to produce **dynamic documents** in different formats: html, pdf, word. 
+]
+
+.pull-right[
+&lt;img src="images/rmarkdown_wizards.png" style="width: 120%; height: 120%" class="center"/&gt;
+
+Artwork by @allison_horst
+]
+
+---
+
+# Helping Silvia and Teteh
+
+&lt;img src="images/rmarkdown_wizards_stats_adviser.png" style="width: 75%; height: 75%" class="center"/&gt;
+
+Artwork by @allison_horst
+
+???
+
+* Silvia and Teteh are statistics advisers
+
+* They regularly receive requests to produce reports summarising the life expectancy for different countries.
+
+* They have written the code and text for Mexico and wish to generalise it and automate the process.
+
+---
+
+# Country Report
+
+* Plots the average life expectancy between 1980 and 2010 for a country. 
+
+
+&lt;img src="reproducible_report_slides_files/figure-html/lifeExp-plot-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Country Report
+
+* Creates a map of the data in the context of the continent. 
+
+&lt;img src="reproducible_report_slides_files/figure-html/Creating the life expectancy plot-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# R Markdown anatomy
+
+### 1. YAML header (aka metadata)
+
+### 2. Narrative (our text)
+
+### 3. Code Chunks (our code/plots)
+
+---
+
+# YAML 
+
+- A typical header contains basic metadata (e.g. `title`, `author`, `date`).
+
+```yaml
+---
+*title: Reproducible Country Report
+*author: Silvia and Teteh
+*date: 30/07/2020
+output: html_document
+---
+```
+---
+# YAML
+
+* And rendering instructions (`output: html_document`) used by pandocs.
+
+```yaml
+---
+title: Reproducible Country Report
+author: Silvia and Teteh
+date: 30/07/2020
+*output: html_document
+---
+```
+
+---
+
+# YAML
+
+* Within output there are extra options, (e.g. `theme`, `highlight`, etc):
+
+```yaml
+---
+title: Reproducible Country Report
+author: Silvia and Teteh
+date: 30/07/2020
+output: 
+  html_document:
+*    theme: cosmo
+*    highlight: haddock
+*    number_sections: TRUE
+---
+```
+---
+
+# YAML and Parameters
+
+* You can also specify parameters `params` to change the content of your document.
+
+```yaml
+---
+title: Reproducible Country Report
+author: Silvia and Teteh
+date: 30/07/2020
+output: 
+  html_document:
+    theme: cosmo
+    highlight: haddock
+    number_sections: TRUE
+*params:
+*  country: Mexico
+---
+```
+--
+
+* More on parameters later!
+
+---
+
+# Your Turn
+
+```yaml
+---
+title: Reproducible Country Report
+author: Silvia and Teteh
+date: 30/07/2020
+output: 
+  html_document:
+    theme: cosmo
+    highlight: haddock
+    number_sections: TRUE
+*   ? 
+params:
+  country: Mexico
+---
+```
+1. Run `?rmarkdown::html_document` in your R console to find out what you can change.
+
+2. What does `toc` and `highlight` do? 
+
+3. Try changing the `theme` and adding a `toc` then rerun the document.
+
+<div class="countdown" id="timer_5f365b91" style="right:0;bottom:0;" data-warnwhen="0">
+<code class="countdown-time"><span class="countdown-digits minutes">06</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div> 
+ 
+---
+
+# Your Turn
+
+.pull-left[
+
+```yaml
+---
+title: Reproducible Country Report
+author: Silvia and Teteh
+date: 30/07/2020
+output: 
+  html_document:
+    theme: cosmo
+    highlight: haddock
+    number_sections: TRUE
+params:
+*  country: Mexico
+---
+```
+
+]
+
+.pull-right[
+
+1. Change `country` to another country in the Americas (e.g. Uruguay, Paraguay).
+2. Rerun the document.
+]
+
+
+<div class="countdown" id="timer_5f365a8b" style="right:0;bottom:0;" data-warnwhen="0">
+<code class="countdown-time"><span class="countdown-digits minutes">03</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div> 
+ 
+--
+
+We'll revisit parameters in more depth later on!
+
+---
+
+# Narrative
+
+
+.pull-left[
+
+```md
+
+# First-level header
+
+
+
+## Second-level header
+
+
+
+### Third-level header
+
+```
+
+`**Bold text**`
+
+`*Italic text*`
+
+`[hyperlink](www.google.com)`
+
+
+
+]
+
+.pull-right[
+
+# First-level header
+
+## Second-level header
+
+### Third-level header
+
+**Bold text**
+
+*Italic text*
+
+[hyperlink](www.google.com)
+
+]
+
+---
+
+# Your Turn
+
+Using the links below add the section **"About the data"** to the document.
+
+* gapminder: http://www.gapminder.org/data/
+
+* gapminder package: https://github.com/jennybc/gapminder
+
+
+
+### About the data
+
+The data comes from the [gapminder](http://www.gapminder.org/data/) dataset from the [`gapminder` package](https://github.com/jennybc/gapminder) by Jenny Bryan.
+
+<div class="countdown" id="timer_5f365872" style="right:0;bottom:0;" data-warnwhen="0">
+<code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div> 
+ 
+
+---
+
+# Code Chunks
+
+&lt;img src="images/add_chunk.png" style="width: 80%; height: 80%" class="center"/&gt;
+Image Source: [RStudio Rmarkdown cheatsheet](https://rmarkdown.rstudio.com/lesson-15.html)
+
+???
+
+Code chunks in various languages can be added from the menu. 
+
+Image source: RStudio RMarkdown cheatsheet.
+
+---
+
+# Code Chunks
+
+````md
+*```{r Libraries, echo = FALSE}
+
+library(tidyverse)
+
+*```
+````
+
+````md
+Starts with ```{} and ends with ```.
+````
+
+???
+
+---
+
+# Code Chunks
+
+
+````md
+*```{r Libraries, echo = FALSE}
+
+library(tidyverse)
+
+```
+````
+Consists of the chunk header `{r Libraries, echo = FALSE}` which specifies
+
+* the **language engine**: `r`
+* an **optional label**: `Libraries`
+* and the **chunk option** `echo = FALSE`
+
+---
+
+# Code Chunks
+
+````md
+```{r Libraries, echo = FALSE}
+
+*library(tidyverse)
+
+```
+````
+
+and the code: `library(tidyverse)`.
+
+---
+# Which looks better?
+
+#### 1. This report considers the life expectancy of Mexico between 1980 and 2010.
+
+
+```r
+source("../exercises/activity_3/report_evolution/scripts/preprocessing.R")
+```
+
+```
+## Warning in countrycode(country, origin = "country.name", destination = "continent"): Some values were not matched unambiguously: Antarctica, Ascension Island, Azores, Barbuda, Bonaire, Canary Islands, Chagos Archipelago, Cocos Islands, French Southern and Antarctic Lands, Grenadines, Heard Island, Kosovo, Madeira Islands, Micronesia, Saba, Saint Martin, Siachen Glacier, Sint Eustatius, South Georgia, South Sandwich Islands, Virgin Islands
+```
+--
+
+#### 2. This report considers the life expectancy of Mexico between 1980 and 2010.
+
+
+```r
+source("../exercises/activity_3/report_evolution/scripts/preprocessing.R")
+```
+--
+
+#### 3. This report considers the life expectancy of Mexico between 1980 and 2010.
+
+
+
+
+---
+# Chunk options
+
+* **Chunk options** are used to customize the behaviour and output of the code chunks.
+
+--
+
+### Code
+
+* `echo` - Display code in output document (default = TRUE)
+* `eval` - Run code in chunk (default = TRUE)
+* `message` - display code messages in document (default = TRUE)
+* `warning` - display code warnings in document (default = TRUE)
+
+--
+
+### Figures
+
+* `fig.align` - 'left', 'right', or 'center' (default = 'default')
+* `fig.cap` - figure caption as character string (default = NULL)
+* `fig.height, fig.width` - Dimensions of plots in inches
+
+---
+
+# Your Turn
+
+Using the following code chunk options to tidy up the report. 
+
+
+* `echo` - Display code in output document (default = TRUE)
+* `eval` - Run code in chunk (default = TRUE)
+* `message` - display code messages in document (default = TRUE)
+* `warning` - display code warnings in document (default = TRUE)
+
+--
+
+If you have time, try playing with the figure options.
+
+* `fig.align` - 'left', 'right', or 'center' (default = 'default')
+* `fig.cap` - figure caption as character string (default = NULL)
+* `fig.height, fig.width` - Dimensions of plots in inches
+
+
+<div class="countdown" id="timer_5f365aaf" style="right:0;bottom:0;" data-warnwhen="0">
+<code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div> 
+ 
+
+---
+
+# Inline R code
+
+* Inline R code is embedded in the text using the syntax *'r '*.
+
+
+
+
+* You can refer to a variable using inline r code by name after the chunk.
+
+--
+
+### Reporting the average life expectancy
+
+````md
+```{r average_lifeExp_calc}
+
+average_lifeExp &lt;- gapminder_country %&gt;%
+  summarise(average_lifeExp = round(mean(lifeExp), 2))
+
+```
+````
+
+The average life expectancy in Mexico between 1980 and 2010 was *'r average_lifeExp'* becomes
+
+
+The average life expectancy in Mexico between 1980 and 2010 was 72.19.
+
+
+---
+
+# Your Turn
+
+### Reporting maximum and minimum life expectancy
+
+* Add two code chunks.
+* Reference the new values in two sentences.
+  * The minimum life expectancy in Mexico between 1980 and 2010 was ____.
+  * The maximum life expectancy in Mexico between 1980 and 2010 was ____.
+
+* Hint: in R you'll need the functions `max()` and `min()`
+
+<div class="countdown" id="timer_5f365942" style="right:0;bottom:0;" data-warnwhen="0">
+<code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div> 
+ 
+---
+# Parameters revisited
+
+**Parameters** allow you to reuse your document with new inputs (e.g. data, values, etc.)
+
+
+### 1. **Add parameters** 
+
+Set parameters in the header as subvalues of `params`
+
+```yaml
+---
+title: Reproducible Country Report
+author: Silvia and Teteh
+date: 30/07/2020
+output: 
+  html_document:
+    theme: cosmo
+    highlight: haddock
+    number_sections: TRUE
+*params:
+*  country: Mexico
+---
+```
+
+---
+# Parameters revisited
+
+**Parameters** allow you to reuse your document with new inputs (e.g. data, values, etc.)
+
+
+### 2. **Call parameters** 
+
+Call parameters values in the code as `params$&lt;name&gt;`.
+
+* How many times is `params$country` used in the code?
+
+* Where does it appear?
+
+<div class="countdown" id="timer_5f36582a" style="right:0;bottom:0;" data-warnwhen="0">
+<code class="countdown-time"><span class="countdown-digits minutes">03</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div> 
+ 
+---
+# Parameters revisited
+
+**Parameters** allow you to reuse your document with new inputs (e.g. data, values, etc.)
+
+
+### 3. **Set parameters** 
+
+Set values with "knit with parameters" or the params argument of `render()`.
+
+More about `render()` soon!
+
+Let's try rerunning the report for **Paraguay**.
+
+---
+
+# But what about Myanmar?
+
+&lt;img src="reproducible_report_slides_files/figure-html/Creating the life expectancy plot Myanmar-1.png" style="display: block; margin: auto;" /&gt;
+
+
+???
+
+Silvia and Teteh have run into a problem. They've received a request for a country report from Myanmar, but when they rerun the report, they still get a map of the americas?
+
+---
+# Your Turn
+
+* Add a parameter for continent.
+
+--
+
+* Replace the mentions of **Americas** with your new parameter.
+
+
+
+<div class="countdown" id="timer_5f3659de" style="right:0;bottom:0;" data-warnwhen="0">
+<code class="countdown-time"><span class="countdown-digits minutes">10</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div> 
+ 
+---
+# Nearly there
+
+
+
+
+
+
+
+
+&lt;img src="reproducible_report_slides_files/figure-html/Creating the life expectancy plot Myanmar2-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Using paste() to update names
+
+`paste("Life Expectancy over time in",
+      params$country,
+      "from 1980 to 2010",
+      sep = " ")`
+    
+
+* Update the plot code to get the correct continent name.
+
+
+<div class="countdown" id="timer_5f365b46" style="right:0;bottom:0;" data-warnwhen="0">
+<code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div> 
+
+
+--
+
+* What changes if we want to change our yaml title?
+
+--
+
+* The same but as you would call inline R code using the syntax *'r '*.
+
+---
+# Creating multiple files using `render()`
+
+
+---
+
+# Next on the Reproducibility spectrum...
+
+
+![](images/spectrum-of-reproducibility-containers.png)
+
+???
+
+Image 1 from [Scientific Data Analysis Pipelines and Reproducibility](https://towardsdatascience.com/scientific-data-analysis-pipelines-and-reproducibility-75ff9df5b4c5) by Altuna Akalin
+
+
+---
+
+class: center, middle
+
+# Thanks!
+
+Slides created via the R package [**xaringan**](https://github.com/yihui/xaringan).
+
+The chakra comes from [remark.js](https://remarkjs.com), [**knitr**](http://yihui.name/knitr), and [R Markdown](https://rmarkdown.rstudio.com).
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "14:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

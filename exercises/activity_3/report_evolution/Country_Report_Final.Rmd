@@ -1,0 +1,172 @@
+---
+title: "Reproducible Country Report"
+author: "Laurie Baker"
+date: "30/07/2020"
+output: 
+  html_document:
+    theme: cosmo
+    highlight: haddock
+    number_sections: TRUE
+params:
+  country: Japan
+  continent: Asia
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Libraries, echo = FALSE, message = FALSE}
+## Step 2 (changing the code chunk settings)
+
+#install.packages("tidyverse")
+#install.packages("countrycode")
+
+library(tidyverse)
+library(countrycode)
+
+```
+
+```{r Data Preparation, echo = FALSE, message = FALSE, warning = FALSE}
+
+source("scripts/preprocessing.R") ## Step 1 Moving out the preprocessing to another script. 
+
+# Country of Interest
+gapminder_country <- gapminder_post %>%
+  filter(country == params$country,
+         year > 1980 & year <= 2010)
+
+# Wider Continent
+gapminder_continent <- gapminder_post %>%
+  filter(continent == params$continent,
+         year > 1980 & year <= 2010)
+
+# Whole world
+gapminder_sub <- gapminder_post %>%
+  filter(year > 1980 & year <= 2010)
+
+```
+
+
+# Life expectancy in `r params$country`
+
+
+```{r lifeExp-plot, echo = FALSE}
+
+ggplot() +
+  geom_line(
+    data = gapminder_sub,
+    aes(
+      x = year,
+      y = lifeExp,
+      group = country,
+      color = continent
+    ),
+    alpha = 0.2,
+    lwd = 0.75
+  ) +
+  geom_line(
+    data = gapminder_country,
+    aes(x = year,
+        y = lifeExp,
+        color = continent
+    ),
+    lwd = 2
+    ) +
+  labs(
+    x = "Year",
+    y = "Life Expectancy",
+    title = paste(
+      "Life Expectancy over time in",
+      params$country,
+      "from 1980 to 2010",
+      sep = " "
+    ),
+    color = "Continent"
+  ) +
+  geom_label(
+    data = gapminder_country %>%
+      slice(which.min(year)),
+    aes(
+      x = year, 
+      y = lifeExp, 
+      label = country
+    ),
+    nudge_x = 2,
+    nudge_y = -2.5
+  )
+
+```
+
+
+```{r average_lifeExp, echo = FALSE}
+
+average_lifeExp <- gapminder_country %>%
+  summarise(average_lifeExp = round(mean(lifeExp), 2))
+
+```
+
+
+The average life expectancy in `r params$country` between 1980 and 2010 was `r average_lifeExp`.
+
+# Life expectancy in the continent
+
+```{r Prepping the data for the life expectancy plot, echo = FALSE, message = FALSE, warning = FALSE}
+
+
+# Summarising the mean life expectancy to plot
+lifeExp_country <- gapminder_continent %>%
+  group_by(country) %>%
+  summarise(mean_lifeExp = mean(lifeExp))
+
+# Get coordinates for country label
+
+country_coords <- world_map_data %>%
+  filter(country %in% params$country) %>%
+  group_by(country) %>%
+  summarise(mean_long = mean(long), mean_lat = mean(lat))
+
+# Combine world geographic data with the gapminder dataset
+
+continent_map_data <- world_map_data %>%
+  filter(continent == params$continent) %>%
+  left_join(lifeExp_country, by = "country")
+```
+
+```{r Creating the life expectancy plot, echo = FALSE, message = FALSE, warning = FALSE}
+
+ggplot(data = continent_map_data) +
+  geom_polygon(aes(
+    x = long,
+    y = lat,
+    group = group,
+    fill = mean_lifeExp
+  )) +
+  coord_quickmap() +
+  geom_point(data = country_coords, 
+             aes(
+               x = mean_long, 
+               y = mean_lat
+               )
+             ) +
+  geom_text(
+    data = country_coords,
+    aes(
+      x = mean_long, 
+      y = mean_lat, 
+      label = country
+      ),
+    nudge_x = 6,
+    nudge_y = 3.5
+  ) +
+  ggtitle("Life Expectancy across the Americas 1980-2010") +
+  guides(
+    fill = guide_legend(
+      title = "Average Life Expectancy", 
+      order = 1
+      )
+    ) +
+  theme_void()
+```
+
+
