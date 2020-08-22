@@ -3,14 +3,15 @@
 ### Version 1.0
 
 **Course Duration**
-
+6 Hours
 
 **Course Summary** 
 
-Introduction to reproducibility including, what is a reproducible analytical pipeline, writing "good code" and creating a reproducible report.
+Introduction to reproducibility. What is a reproducible analytical pipeline (RAP), writing "good code" and creating a reproducible report.
 
 **Course Objective** 
 
+Participants should gain an awareness of the importance of reproducibility in their work. Learners will also gain experience of linting code in Python and using parameterised reports in R markdown.
 
 **Lead Developer**
 
@@ -23,13 +24,16 @@ Pending
 
 **Intended Audience** 
 
-Pending
+Intermediate level programmers who would like to prepare their code for collaboration and improve their efficiency in producing report outputs.
 
 **Learning Objective Detail** 
 
 At the end of this course participants will be able to:
 
-* NA
+* represent pipelines and identify opportunities to automate
+* consider adherance to a programming style guide
+* use linting software to standardise Python scripts
+* use parameterised R markdown reports to improve the efficiency of report production. 
 
 **Course Type**
 
@@ -37,30 +41,12 @@ At the end of this course participants will be able to:
 * Self learning - Not Available
 * Face to face - Available
 
-**Skill Level** <variable>
+**Skill Level**
 
-NA
+Basic familiarity with Python and R programming is assumed.
 
-**Pre requisite summary** <variable>
+**Pre requisite summary**
 
-NA
-
-
-
-**Pre-requisites** (optional)
-
-Variable number of paragraphs outlining all software dependencies and precursor courses/skills.
-Requirement files.
-Package versions.
-
-**Course Description** (optional)
-
-More extensive course description to follow in paragraphs here. Variable number of paragraphs. Please include time
-estimates of sections.
+Participants should download the Anaconda distribution to their device and should also download all course content from the given Github repository. Participants will also require R markdown installation and should test that they can successfully knit basic html documents using that package. 
 
 
-**Order of material list** eg from DSWR(variable):
-
-1. DSWR1courseNotesDay1.html
-2. DSWR1courseNotesDay2.html
-3. DSWRcourseNotesDay2PM.html
