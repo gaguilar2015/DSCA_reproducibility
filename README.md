@@ -3,6 +3,7 @@
 ### Version 1.0
 
 **Course Duration**
+
 6 Hours
 
 **Course Summary** 
